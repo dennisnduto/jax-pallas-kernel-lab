@@ -34,12 +34,14 @@ def main() -> None:
     left = jax.random.normal(left_key, (args.size, args.size), dtype=jnp.float32)
     right = jax.random.normal(right_key, (args.size, args.size), dtype=jnp.float32)
 
-    kernel = lambda: blocked_matmul(
-        left,
-        right,
-        block_m=args.block,
-        block_n=args.block,
-    )
+    def kernel():
+        return blocked_matmul(
+            left,
+            right,
+            block_m=args.block,
+            block_n=args.block,
+        )
+
     reference = jax.jit(lambda a, b: a @ b)
 
     kernel().block_until_ready()
