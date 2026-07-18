@@ -30,12 +30,12 @@ def blocked_matmul(
         )
     if left.dtype != right.dtype:
         raise TypeError(f"left/right dtypes differ: {left.dtype} versus {right.dtype}")
+    if block_m < 1 or block_n < 1:
+        raise ValueError("block sizes must be positive")
     if rows % block_m or columns % block_n:
         raise ValueError(
             f"shape {(rows, columns)} must be divisible by tile {(block_m, block_n)}"
         )
-    if block_m < 1 or block_n < 1:
-        raise ValueError("block sizes must be positive")
 
     use_interpret = jax.default_backend() == "cpu" if interpret is None else interpret
     call = pl.pallas_call(
